@@ -33,7 +33,7 @@ public class TicketService {
     TicketRepository ticketRepository;
 
     @Autowired
-    private JavaMailSender emailSender;
+    JavaMailSender emailSender;
 
     public TicketResponseDto bookTicket(TicketRequestDto ticketRequestDto) throws UserNotFoundException, ShowNotFoundException,SeatUnavailableException
     {
@@ -102,6 +102,7 @@ public class TicketService {
         userRepository.save(user);
 
         SimpleMailMessage simpleMailMessage = new SimpleMailMessage();
+
         String body = "Hi "+user.getName()+" ! /n"+
                 "You have successFully booked a ticket.Please Find the following details below /n"+
                 "Booked seats : "+seats +"/n"
@@ -110,8 +111,9 @@ public class TicketService {
                 +"Show Time : "+show.getShowTime()+"/n"
                 +"Thanks For Visiting us and Enjoy the show !!!";
 
+
         simpleMailMessage.setSubject("Ticket Confirmation Mail");
-        simpleMailMessage.setFrom("");
+        simpleMailMessage.setFrom("rocky30031998@gmail.com");
         simpleMailMessage.setText(body);
         simpleMailMessage.setTo(user.getEmailId());
 

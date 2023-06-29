@@ -1,7 +1,9 @@
 package com.example.Book_My_Show.Service;
 
 import com.example.Book_My_Show.Dtos.RequestDtos.AddShowDto;
+import com.example.Book_My_Show.Dtos.RequestDtos.GetAllShowsDto;
 import com.example.Book_My_Show.Dtos.RequestDtos.ShowSeatsDto;
+import com.example.Book_My_Show.Dtos.ResponseDtos.GetAllShowsResponseDto;
 import com.example.Book_My_Show.Enums.SeatType;
 import com.example.Book_My_Show.Exceptions.MovieNotFoundException;
 import com.example.Book_My_Show.Exceptions.ShowNotFoundException;
@@ -14,6 +16,7 @@ import com.example.Book_My_Show.Transformers.ShowTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -100,5 +103,18 @@ public class ShowService {
         showRepository.save(show);
 
         return "Show Seats has been SuccessFully Associated";
+    }
+    public List<GetAllShowsResponseDto> getAllShowsOfMovieInTheatre(GetAllShowsDto getAllShowsDto)
+    {
+        List<Integer> showsIdList = showRepository.getAllShows(getAllShowsDto.getShowDate(),getAllShowsDto.getTheatreId(),getAllShowsDto.getMovieId());
+        List<GetAllShowsResponseDto> shows = new ArrayList<>();
+
+        for(Integer ids : showsIdList)
+        {
+            Show show = showRepository.findById(ids).get();
+            GetAllShowsResponseDto getAllShowsResponseDto = ShowTransformer.transformToObj(show);
+            shows.add(getAllShowsResponseDto);
+        }
+        return shows;
     }
 }
