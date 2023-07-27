@@ -2,6 +2,7 @@ package com.example.Book_My_Show.Service;
 
 import com.example.Book_My_Show.Dtos.RequestDtos.AddShowDto;
 import com.example.Book_My_Show.Dtos.RequestDtos.GetAllShowsDto;
+import com.example.Book_My_Show.Dtos.RequestDtos.GetShowTimeDto;
 import com.example.Book_My_Show.Dtos.RequestDtos.ShowSeatsDto;
 import com.example.Book_My_Show.Dtos.ResponseDtos.GetAllShowsResponseDto;
 import com.example.Book_My_Show.Enums.SeatType;
@@ -17,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -116,5 +118,29 @@ public class ShowService {
             shows.add(getAllShowsResponseDto);
         }
         return shows;
+    }
+
+    public String getMovieWithMostShow(String atDate)
+    {
+        int movieId = showRepository.getMovieWithMostShow(atDate);
+
+        Movie movie = movieRepository.findById(movieId).get();
+
+        return movie.getMovieName();
+    }
+
+    public List<String> getShowTime(GetShowTimeDto getShowTimeDto) throws MovieNotFoundException ,TheatreNotFoundException
+    {
+       Optional<Movie> movieOptional = movieRepository.findByMovieName(getShowTimeDto.getMovieName());
+
+       if(movieOptional.isEmpty()) throw new MovieNotFoundException("Movie Not Exist");
+
+        Optional<Theatre> theatreOptional = theatreRepository.findByTheatreName(getShowTimeDto.getTheatreName());
+
+        if(theatreOptional.isEmpty()) throw new TheatreNotFoundException("Theater Not Exist");
+
+        List<String> timeOfShow = showRepository.getShowTime(movieOptional.get().getMovieId(),theatreOptional.get().getTheatreId());
+
+        return timeOfShow;
     }
 }
